@@ -105,8 +105,8 @@ PageAttributeToGcdAttribute (
   return GcdAttributes;
 }
 
-#define MIN_T0SZ        16
-#define BITS_PER_LEVEL  9
+#define MIN_T0SZ         9
+#define BITS_PER_LEVEL  13
 
 VOID
 GetRootTranslationTableInfo (
@@ -117,7 +117,7 @@ GetRootTranslationTableInfo (
 {
   // Get the level of the root table
   if (TableLevel) {
-    *TableLevel = (T0SZ - MIN_T0SZ) / BITS_PER_LEVEL;
+    *TableLevel = 1 + (T0SZ - MIN_T0SZ) / BITS_PER_LEVEL;
   }
 
   if (TableEntryCount) {
@@ -202,14 +202,14 @@ GetBlockEntryListFromAddress (
     return NULL;
   }
 
-  // Ensure the Region is aligned on 4KB boundary
-  if ((RegionStart & (SIZE_4KB - 1)) != 0) {
+  // Ensure the Region is aligned on 64KB boundary
+ if ((RegionStart & (SIZE_64KB - 1)) != 0) {
     ASSERT_EFI_ERROR (EFI_INVALID_PARAMETER);
     return NULL;
   }
 
-  // Ensure the required size is aligned on 4KB boundary and not 0
-  if ((*BlockEntrySize & (SIZE_4KB - 1)) != 0 || *BlockEntrySize == 0) {
+  // Ensure the required size is aligned on 64KB boundary and not 0
+  if ((*BlockEntrySize & (SIZE_64KB - 1)) != 0 || *BlockEntrySize == 0) {
     ASSERT_EFI_ERROR (EFI_INVALID_PARAMETER);
     return NULL;
   }
@@ -282,7 +282,8 @@ GetBlockEntryListFromAddress (
         }
 
         // Create a new translation table
-        TranslationTable = AllocatePages (1);
+        TranslationTable = AllocateAlignedPages (EFI_SIZE_TO_PAGES (SIZE_64KB),
+                                                 SIZE_64KB);
         if (TranslationTable == NULL) {
           return NULL;
         }
@@ -305,7 +306,8 @@ GetBlockEntryListFromAddress (
         //
 
         // Create a new translation table
-        TranslationTable = AllocatePages (1);
+        TranslationTable = AllocateAlignedPages (EFI_SIZE_TO_PAGES (SIZE_64KB),
+                                                 SIZE_64KB);
         if (TranslationTable == NULL) {
           return NULL;
         }
@@ -349,7 +351,7 @@ UpdateRegionMapping (
   UINTN   TableLevel;
 
   // Ensure the Length is aligned on 4KB boundary
-  if ((RegionLength == 0) || ((RegionLength & (SIZE_4KB - 1)) != 0)) {
+  if ((RegionLength == 0) || ((RegionLength & (SIZE_64KB - 1)) != 0)) {
     ASSERT_EFI_ERROR (EFI_INVALID_PARAMETER);
     return EFI_INVALID_PARAMETER;
   }
@@ -617,7 +619,7 @@ ArmConfigureMmu (
   // UEFI should not run at EL3.
   if (ArmReadCurrentEL () == AARCH64_EL2) {
     //Note: Bits 23 and 31 are reserved(RES1) bits in TCR_EL2
-    TCR = T0SZ | (1UL << 31) | (1UL << 23) | TCR_TG0_4KB;
+    TCR = T0SZ | (1UL << 31) | (1UL << 23) | TCR_TG0_64KB;
 
     // Set the Physical Address Size using MaxAddress
     if (MaxAddress < SIZE_4GB) {
@@ -639,7 +641,7 @@ ArmConfigureMmu (
     }
   } else if (ArmReadCurrentEL () == AARCH64_EL1) {
     // Due to Cortex-A57 erratum #822227 we must set TG1[1] == 1, regardless of EPD1.
-    TCR = T0SZ | TCR_TG0_4KB | TCR_TG1_4KB | TCR_EPD1;
+    TCR = T0SZ | TCR_TG0_64KB | TCR_TG1_4KB | TCR_EPD1;
 
     // Set the Physical Address Size using MaxAddress
     if (MaxAddress < SIZE_4GB) {
@@ -681,7 +683,8 @@ ArmConfigureMmu (
   ArmSetTCR (TCR);
 
   // Allocate pages for translation table
-  TranslationTable = AllocatePages (1);
+  TranslationTable = AllocateAlignedPages (EFI_SIZE_TO_PAGES (SIZE_64KB),
+                                           SIZE_64KB);
   if (TranslationTable == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }

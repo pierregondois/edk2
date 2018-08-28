@@ -42,7 +42,8 @@ HandOffToDxeCore (
   //
   // Allocate 128KB for the Stack
   //
-  BaseOfStack = AllocatePages (EFI_SIZE_TO_PAGES (STACK_SIZE));
+  BaseOfStack = AllocateAlignedPages (EFI_SIZE_TO_PAGES (STACK_SIZE),
+                                      SIZE_64KB);
   ASSERT (BaseOfStack != NULL);
 
   if (PcdGetBool (PcdSetNxForStack)) {
