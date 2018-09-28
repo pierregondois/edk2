@@ -459,7 +459,7 @@ CoreLoadPeImage (
   EFI_STATUS                Status;
   BOOLEAN                   DstBufAlocated;
   UINTN                     Size;
-
+  DEBUG((1, "Looading new device \n"));
   ZeroMem (&Image->ImageContext, sizeof (Image->ImageContext));
 
   Image->ImageContext.Handle    = Pe32Handle;
@@ -515,6 +515,9 @@ CoreLoadPeImage (
     //
     // Allocate Destination Buffer as caller did not pass it in
     //
+	  DEBUG((1, "DstBuffer == 0 \n"));
+	  DEBUG((1, "Image->ImageContext.SectionAlignment = %lx \n", Image->ImageContext.SectionAlignment));
+	  DEBUG((1, "Image->ImageContext.ImageSize = %lx \n", Image->ImageContext.ImageSize));
 
     if (Image->ImageContext.SectionAlignment > EFI_PAGE_SIZE) {
       Size = (UINTN)Image->ImageContext.ImageSize + Image->ImageContext.SectionAlignment;
@@ -523,6 +526,7 @@ CoreLoadPeImage (
     }
 
     Image->NumberOfPages = EFI_SIZE_TO_PAGES (Size);
+	  DEBUG((1, "Image->NumberOfPages = %d  and size = %lx \n", Image->NumberOfPages, Size));
 
     //
     // If the image relocations have not been stripped, then load at any address.
@@ -553,7 +557,10 @@ CoreLoadPeImage (
                      );
       }
     } else {
+  	  DEBUG((1, "Image->ImageContext.ImageAddress = %lx \n", Image->ImageContext.ImageAddress));
+
       if (Image->ImageContext.ImageAddress >= 0x100000 || Image->ImageContext.RelocationsStripped) {
+    	  DEBUG((1, "Trying to allocate at address %lx \n", Image->ImageContext.ImageAddress));
         Status = CoreAllocatePages (
                    AllocateAddress,
                    (EFI_MEMORY_TYPE) (Image->ImageContext.ImageCodeMemoryType),
@@ -562,6 +569,7 @@ CoreLoadPeImage (
                    );
       }
       if (EFI_ERROR (Status) && !Image->ImageContext.RelocationsStripped) {
+    	  DEBUG((1, "Trying to allocate at any address \n"));
         Status = CoreAllocatePages (
                    AllocateAnyPages,
                    (EFI_MEMORY_TYPE) (Image->ImageContext.ImageCodeMemoryType),
@@ -725,7 +733,7 @@ CoreLoadPeImage (
   //
   // Print the load address and the PDB file name if it is available
   //
-
+  DEBUG((1, "Before Loading \n"));
   DEBUG_CODE_BEGIN ();
 
     UINTN Index;
@@ -777,10 +785,12 @@ CoreLoadPeImage (
     DEBUG ((DEBUG_INFO | DEBUG_LOAD, "\n"));
 
   DEBUG_CODE_END ();
+  DEBUG((1, "After Loading \n"));
 
   return EFI_SUCCESS;
 
 Done:
+  DEBUG((1, "CoreLoadPeImage Done \n"));
 
   //
   // Free memory.
@@ -1277,7 +1287,9 @@ CoreLoadImageCommon (
   //
   // Load the image.  If EntryPoint is Null, it will not be set.
   //
+  DEBUG((1, "CoreLoadImageCommon before loading\n"));
   Status = CoreLoadPeImage (BootPolicy, &FHand, Image, DstBuffer, EntryPoint, Attribute);
+  DEBUG((1, "CoreLoadImageCommon after loading, status = %d\n", Status));
   if (EFI_ERROR (Status)) {
     if ((Status == EFI_BUFFER_TOO_SMALL) || (Status == EFI_OUT_OF_RESOURCES)) {
       if (NumberOfPages != NULL) {
@@ -1301,6 +1313,7 @@ CoreLoadImageCommon (
   //
   //Reinstall loaded image protocol to fire any notifications
   //
+  DEBUG((1, "CoreLoadImageCommon before CoreReinstallProtocolInterface\n"));
   Status = CoreReinstallProtocolInterface (
              Image->Handle,
              &gEfiLoadedImageProtocolGuid,
@@ -1322,6 +1335,7 @@ CoreLoadImageCommon (
   //
   // Install Loaded Image Device Path Protocol onto the image handle of a PE/COFE image
   //
+  DEBUG((1, "CoreLoadImageCommon before CoreInstallProtocolInterface\n"));
   Status = CoreInstallProtocolInterface (
             &Image->Handle,
             &gEfiLoadedImageDevicePathProtocolGuid,
@@ -1354,6 +1368,8 @@ CoreLoadImageCommon (
   *ImageHandle = Image->Handle;
 
 Done:
+	DEBUG((1, "CoreLoadImageCommon done \n"));
+
   //
   // All done accessing the source file
   // If we allocated the Source buffer, free it
@@ -1440,6 +1456,7 @@ CoreLoadImage (
 
   PERF_LOAD_IMAGE_BEGIN (NULL);
 
+  DEBUG((1, "From CoreLoadImage \n"));
   Status = CoreLoadImageCommon (
              BootPolicy,
              ParentImageHandle,
@@ -1452,6 +1469,7 @@ CoreLoadImage (
              NULL,
              EFI_LOAD_PE_IMAGE_ATTRIBUTE_RUNTIME_REGISTRATION | EFI_LOAD_PE_IMAGE_ATTRIBUTE_DEBUG_IMAGE_INFO_TABLE_REGISTRATION
              );
+  DEBUG((1, "End of CoreLoadImage \n"));
 
   Handle = NULL;
   if (!EFI_ERROR (Status)) {

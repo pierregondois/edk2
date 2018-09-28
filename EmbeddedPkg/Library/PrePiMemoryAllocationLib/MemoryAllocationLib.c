@@ -61,6 +61,7 @@ AllocatePages (
     //
     // Update the PHIT to reflect the memory usage
     //
+		DEBUG((1, "level 1.0 (jsute avant) base=0x%lx et l=%x\n", Hob.HandoffInformationTable->EfiFreeMemoryTop, Pages * EFI_PAGE_SIZE));
     Hob.HandoffInformationTable->EfiFreeMemoryTop -= Pages * EFI_PAGE_SIZE;
 
     // This routine used to create a memory allocation HOB a la PEI, but that's not
@@ -69,6 +70,7 @@ AllocatePages (
     //
     // Create a memory allocation HOB.
     //
+	DEBUG((1, "level 1.0 base=0x%lx et l=%x\n", Hob.HandoffInformationTable->EfiFreeMemoryTop, Pages * EFI_PAGE_SIZE));
     BuildMemoryAllocationHob (
         Hob.HandoffInformationTable->EfiFreeMemoryTop,
         Pages * EFI_PAGE_SIZE,

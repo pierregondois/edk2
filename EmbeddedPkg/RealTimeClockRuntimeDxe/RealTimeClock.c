@@ -282,11 +282,13 @@ InitializeRealTimeClock (
   IN EFI_SYSTEM_TABLE                      *SystemTable
   )
 {
+	DEBUG((1, "\n We init real time \n"));
   EFI_STATUS  Status;
   UINTN       Size;
 
   Status = LibRtcInitialize (ImageHandle, SystemTable);
   if (EFI_ERROR (Status)) {
+		DEBUG((1, "return status real time clock %d\n", Status));
     return Status;
   }
 

@@ -1802,6 +1802,7 @@ EfiBootManagerBoot (
       RamDiskDevicePath = BmGetRamDiskDevicePath (FilePath);
 
       REPORT_STATUS_CODE (EFI_PROGRESS_CODE, PcdGet32 (PcdProgressCodeOsLoaderLoad));
+      DEBUG((1, "Before  LoadImage from here \n"));
       Status = gBS->LoadImage (
                       TRUE,
                       gImageHandle,
@@ -1837,6 +1838,7 @@ EfiBootManagerBoot (
       return;
     }
   }
+  DEBUG((1, "From EfiBootManagerBoot  EfiCreateEventLegacyBootEx \n"));
 
   //
   // Check to see if we should legacy BOOT. If yes then do the legacy boot
@@ -1872,6 +1874,7 @@ EfiBootManagerBoot (
   //
   // Provide the image with its load options
   //
+  DEBUG((1, "From EfiBootManagerBoot  HandleProtocol \n"));
   Status = gBS->HandleProtocol (ImageHandle, &gEfiLoadedImageProtocolGuid, (VOID **) &ImageInfo);
   ASSERT_EFI_ERROR (Status);
 
@@ -1899,7 +1902,9 @@ EfiBootManagerBoot (
 
   REPORT_STATUS_CODE (EFI_PROGRESS_CODE, PcdGet32 (PcdProgressCodeOsLoaderStart));
 
+  DEBUG((1, "From EfiBootManagerBoot  StartImage \n"));
   Status = gBS->StartImage (ImageHandle, &BootOption->ExitDataSize, &BootOption->ExitData);
+  DEBUG((1, "After EfiBootManagerBoot  StartImage \n"));
   DEBUG ((DEBUG_INFO | DEBUG_LOAD, "Image Return Status = %r\n", Status));
   BootOption->Status = Status;
   if (EFI_ERROR (Status)) {
@@ -1930,6 +1935,7 @@ EfiBootManagerBoot (
   // Set Logo status invalid after trying one boot option
   //
   BootLogo = NULL;
+  DEBUG((1, "From EfiBootManagerBoot  LocateProtocol \n"));
   Status = gBS->LocateProtocol (&gEfiBootLogoProtocolGuid, NULL, (VOID **) &BootLogo);
   if (!EFI_ERROR (Status) && (BootLogo != NULL)) {
     Status = BootLogo->SetBootLogo (BootLogo, NULL, 0, 0, 0, 0);
@@ -1939,6 +1945,7 @@ EfiBootManagerBoot (
   //
   // Clear Boot Current
   //
+  DEBUG((1, "From EfiBootManagerBoot  SetVariable \n"));
   Status = gRT->SetVariable (
                   L"BootCurrent",
                   &gEfiGlobalVariableGuid,

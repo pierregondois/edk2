@@ -93,6 +93,7 @@ PrePiMain (
   SaveAndSetDebugTimerInterrupt (TRUE);
 
   // Declare the PI/UEFI memory region
+  DEBUG((1, "We init EfiFreeMemoryTop bis and stackbase=%lx\n",StacksBase));
   HobList = HobConstructor (
     (VOID*)UefiMemoryBase,
     FixedPcdGet32 (PcdSystemMemoryUefiRegionSize),
@@ -112,6 +113,7 @@ PrePiMain (
   } else {
     StacksSize = PcdGet32 (PcdCPUCorePrimaryStackSize);
   }
+  DEBUG((1, "StacksBase at %lx Stacksized at %lx \n",StacksBase, StacksSize));
   BuildStackHob (StacksBase, StacksSize);
 
   //TODO: Call CpuPei as a library
@@ -207,6 +209,7 @@ CEntryPoint (
   // If not primary Jump to Secondary Main
   if (ArmPlatformIsPrimaryCore (MpId)) {
     // Goto primary Main.
+	  DEBUG((1, "CEntryPoint top  stackbase = %lx\n", StacksBase));
     PrimaryMain (UefiMemoryBase, StacksBase, StartTimeStamp);
   } else {
     SecondaryMain (MpId);

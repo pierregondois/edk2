@@ -98,6 +98,8 @@ HobConstructor (
 
   Hob->EfiMemoryTop        = (UINTN)EfiMemoryBegin + EfiMemoryLength;
   Hob->EfiMemoryBottom     = (UINTN)EfiMemoryBegin;
+  DEBUG((1, "We init EfiFreeMemoryTop 0x%lx\n", EfiFreeMemoryTop));
+
   Hob->EfiFreeMemoryTop    = (UINTN)EfiFreeMemoryTop;
   Hob->EfiFreeMemoryBottom = (EFI_PHYSICAL_ADDRESS)(UINTN)(HobEnd+1);
   Hob->EfiEndOfHobList     = (EFI_PHYSICAL_ADDRESS)(UINTN)HobEnd;

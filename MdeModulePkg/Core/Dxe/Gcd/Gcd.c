@@ -824,6 +824,8 @@ CoreConvertSpace (
     // Set attributes operation
     //
     case GCD_SET_ATTRIBUTES_MEMORY_OPERATION:
+      DEBUG ((1, "2  Status = %r    atrti %lx Attributes / %lx  for addresses %lx l= %lx\n", EFI_INVALID_PARAMETER, Entry->Capabilities, Attributes, BaseAddress, Length));
+      DEBUG ((1, "base %lx end %lx attributes %lx \n\n", Entry->BaseAddress, Entry->EndAddress, Entry->Attributes));
       if ((Attributes & EFI_MEMORY_RUNTIME) != 0) {
         if ((BaseAddress & EFI_PAGE_MASK) != 0 || (Length & EFI_PAGE_MASK) != 0) {
           Status = EFI_INVALID_PARAMETER;
@@ -831,6 +833,7 @@ CoreConvertSpace (
         }
       }
       if ((Entry->Capabilities & Attributes) != Attributes) {
+  	    DEBUG ((1, "3  Status = %r\n", EFI_INVALID_PARAMETER));
         Status = EFI_UNSUPPORTED;
         goto Done;
       }
@@ -848,6 +851,7 @@ CoreConvertSpace (
       // Current attributes must still be supported with new capabilities
       //
       if ((Capabilities & Entry->Attributes) != Entry->Attributes) {
+  	    DEBUG ((1, "3  Status = %r\n", EFI_INVALID_PARAMETER));
         Status = EFI_UNSUPPORTED;
         goto Done;
       }
@@ -1626,8 +1630,8 @@ CoreSetMemorySpaceAttributes (
   IN UINT64                Attributes
   )
 {
-  DEBUG ((DEBUG_GCD, "GCD:SetMemorySpaceAttributes(Base=%016lx,Length=%016lx)\n", BaseAddress, Length));
-  DEBUG ((DEBUG_GCD, "  Attributes  = %016lx\n", Attributes));
+  DEBUG ((1, "GCD:SetMemorySpaceAttributes(Base=%016lx,Length=%016lx)\n", BaseAddress, Length));
+  DEBUG ((1, "  Attributes  = %016lx\n", Attributes));
 
   return CoreConvertSpace (GCD_SET_ATTRIBUTES_MEMORY_OPERATION, (EFI_GCD_MEMORY_TYPE) 0, (EFI_GCD_IO_TYPE) 0, BaseAddress, Length, 0, Attributes);
 }

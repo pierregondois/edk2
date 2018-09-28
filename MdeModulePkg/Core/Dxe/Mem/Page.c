@@ -756,6 +756,7 @@ CoreConvertPagesEx (
       Entry = CR (Link, MEMORY_MAP, Link, MEMORY_MAP_SIGNATURE);
 
       if (Entry->Start <= Start && Entry->End > Start) {
+    	  DEBUG((1, "Found one entry, start %lx end = %lx, and our start = %lx and our end = %lx \n", Entry->Start, Entry->End, Start, End));
         break;
       }
     }
@@ -1280,7 +1281,10 @@ CoreInternalAllocatePages (
   }
 
   if (Type == AllocateAddress) {
-    if ((*Memory & (Alignment - 1)) != 0) {
+	  DEBUG((1, "Internal allocation, Type= %d Memory = %lx Alignment = %lx \n", Type, *Memory ,Alignment));
+	  if ((*Memory & (Alignment - 1)) != 0) {
+		  DEBUG((1, "Internal allocation, allocation not alligned, we return \n", Type, *Memory ,Alignment));
+
       return EFI_NOT_FOUND;
     }
   }
@@ -1346,6 +1350,8 @@ CoreInternalAllocatePages (
   if (NeedGuard) {
     Status = CoreConvertPagesWithGuard(Start, NumberOfPages, MemoryType);
   } else {
+//  	DEBUG((1, "From 4 type = %d memtype = %d nbpage = %u start = %lx nbbytes = %lx end = %lx\n",
+//  			Type, MemoryType, NumberOfPages, Start, NumberOfBytes, End));
     Status = CoreConvertPages(Start, NumberOfPages, MemoryType);
   }
 

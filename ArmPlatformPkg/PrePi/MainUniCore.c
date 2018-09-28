@@ -21,6 +21,8 @@ PrimaryMain (
   IN  UINT64                    StartTimeStamp
   )
 {
+	  DEBUG((1, "PrimaryMain top-1  stackbase = %lx\n", StacksBase));
+
   PrePiMain (UefiMemoryBase, StacksBase, StartTimeStamp);
 
   // We must never return
