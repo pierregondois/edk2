@@ -323,14 +323,14 @@ LibRtcInitialize (
   // Declare the controller as EFI_MEMORY_RUNTIME
   Status = gDS->AddMemorySpace (
                   EfiGcdMemoryTypeMemoryMappedIo,
-                  mPL031RtcBase, SIZE_4KB,
+                  mPL031RtcBase, SIZE_64KB,
                   EFI_MEMORY_UC | EFI_MEMORY_RUNTIME
                   );
   if (EFI_ERROR (Status)) {
     return Status;
   }
 
-  Status = gDS->SetMemorySpaceAttributes (mPL031RtcBase, SIZE_4KB, EFI_MEMORY_UC | EFI_MEMORY_RUNTIME);
+  Status = gDS->SetMemorySpaceAttributes (mPL031RtcBase, SIZE_64KB, EFI_MEMORY_UC | EFI_MEMORY_RUNTIME);
   if (EFI_ERROR (Status)) {
     return Status;
   }

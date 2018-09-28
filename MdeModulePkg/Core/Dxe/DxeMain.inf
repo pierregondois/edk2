@@ -185,6 +185,9 @@
   gEfiMdeModulePkgTokenSpaceGuid.PcdFrameworkCompatibilitySupport     ## CONSUMES
 
 [Pcd]
+# Personal argument to enable / disable translation of the amount of memory from Windows bootloader
+  gEfiMdeModulePkgTokenSpaceGuid.PcdIsBooting                               ## CONSUMES
+
   gEfiMdeModulePkgTokenSpaceGuid.PcdLoadFixAddressBootTimeCodePageNumber    ## SOMETIMES_CONSUMES
   gEfiMdeModulePkgTokenSpaceGuid.PcdLoadFixAddressRuntimeCodePageNumber     ## SOMETIMES_CONSUMES
   gEfiMdeModulePkgTokenSpaceGuid.PcdLoadModuleAtFixAddressEnable            ## CONSUMES

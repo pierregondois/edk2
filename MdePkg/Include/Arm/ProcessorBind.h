@@ -167,8 +167,8 @@ typedef INT32   INTN;
 ///
 /// Page allocation granularity for ARM
 ///
-#define DEFAULT_PAGE_ALLOCATION_GRANULARITY   (0x1000)
-#define RUNTIME_PAGE_ALLOCATION_GRANULARITY   (0x1000)
+#define DEFAULT_PAGE_ALLOCATION_GRANULARITY   (0x10000)
+#define RUNTIME_PAGE_ALLOCATION_GRANULARITY   (0x10000)
 
 //
 // Modifier to ensure that all protocol member functions and EFI intrinsics

@@ -728,6 +728,11 @@ CoreConvertPagesEx (
   NumberOfBytes = LShiftU64 (NumberOfPages, EFI_PAGE_SHIFT);
   End = Start + NumberOfBytes - 1;
 
+  if ((Start & EFI_PAGE_MASK) != 0) {
+    DEBUG((1, "Stuck in loop, address not aligned\n"));
+    while(1) {};
+  }
+
   ASSERT (NumberOfPages);
   ASSERT ((Start & EFI_PAGE_MASK) == 0);
   ASSERT (End > Start) ;
@@ -1384,7 +1389,22 @@ CoreAllocatePages (
   OUT EFI_PHYSICAL_ADDRESS  *Memory
   )
 {
-  EFI_STATUS  Status;
+
+  // If we are running the OS bootloader, it will request for 4k pages and we will give him 64k
+  // This change will divide the anount of memory requested by 16 so we don t run out of memory.
+  // This configuration can be disabled.
+	if (PcdGetBool(PcdIsBooting)) {
+		DEBUG((1, "CoreAllocatePages: 64k mode : %d becomes %d \n", NumberOfPages, 1+NumberOfPages/16));
+		NumberOfPages = NumberOfPages/16 + 1;
+	}
+
+	DEBUG((1, "CoreAllocatePages type of allocation = %d mmtype= %d nbpages = %d   ", Type, MemoryType, NumberOfPages));
+	if (Type== 2) {
+		DEBUG((1, "at address %lx", *Memory));
+	}
+	DEBUG((1, "\n"));
+
+	EFI_STATUS  Status;
   BOOLEAN     NeedGuard;
 
   NeedGuard = IsPageTypeToGuard (MemoryType, Type) && !mOnGuarding;

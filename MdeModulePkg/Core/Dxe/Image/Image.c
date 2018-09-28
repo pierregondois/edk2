@@ -1655,7 +1655,30 @@ CoreStartImage (
     // Call the image's entry point
     //
     Image->Started = TRUE;
+
+    DEBUG((1, "CoreStartImage before entrypoint  at %p name = %a at %p \n", Image->Info.ImageBase, Image->ImageContext.PdbPointer, Image->ImageContext.PdbPointer));
+
+    if ((Image->ImageContext.PdbPointer) != NULL) {
+    if (0 == StrCmp(L"bootmgfw.pdb", (UINT16*) Image->ImageContext.PdbPointer)){
+      DEBUG((1, "Windows bootloader is is going to start, memory allocation will be divided by 16 from now (64k/4k=16)\n"));
+      PcdSetBool(PcdIsBooting, TRUE);
+    }
+    } else {
+    PcdSetBool(PcdIsBooting, TRUE);
+      DEBUG((1, "OpenSuse bootloader is is going to start, memory allocation will be divided by 16 from now (64k/4k=16)\n"));
+    }
+
     Image->Status = Image->EntryPoint (ImageHandle, Image->Info.SystemTable);
+    DEBUG((1, "CoreStartImage after entrypoint   at %p\n", Image->Info.ImageBase));
+    if ((Image->ImageContext.PdbPointer) != NULL) {
+    if (0 == StrCmp((UINT16*) Image->ImageContext.PdbPointer, L"bootmgfw.pdb")){
+      DEBUG((1, "Goining back to 4k mode (Windows)\n"));
+      PcdSetBool(PcdIsBooting, FALSE);
+    }
+    } else {
+    PcdSetBool(PcdIsBooting, FALSE);
+    DEBUG((1, "Goining back to 4k mode (Opensuse) \n"));
+    }
 
     //
     // Add some debug information if the image returned with error.

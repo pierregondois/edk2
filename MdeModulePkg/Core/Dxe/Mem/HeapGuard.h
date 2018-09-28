@@ -73,61 +73,54 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 #define GUARDED_HEAP_MAP_ENTRY_BYTES        \
         (GUARDED_HEAP_MAP_ENTRY_BITS / 8)
 
+// All the macros have been set to 0 because they are not used,
+// but when evaluating their value, the compiler triggers an error
+
 // L4 table address width: 64 - 9 * 4 - 6 - 12 = 10b
 #define GUARDED_HEAP_MAP_ENTRY_SHIFT              \
-        (GUARDED_HEAP_MAP_ENTRY_BITS              \
-         - GUARDED_HEAP_MAP_TABLE_ENTRY_SHIFT * 4 \
-         - GUARDED_HEAP_MAP_ENTRY_BIT_SHIFT       \
-         - EFI_PAGE_SHIFT)
+        0
 
 // L4 table address mask: (1 << 10 - 1) = 0x3FF
 #define GUARDED_HEAP_MAP_ENTRY_MASK               \
-        ((1 << GUARDED_HEAP_MAP_ENTRY_SHIFT) - 1)
+        0
 
 // Size of each L4 table: (1 << 10) * 8 = 8KB = 2-page
 #define GUARDED_HEAP_MAP_SIZE                     \
-        ((1 << GUARDED_HEAP_MAP_ENTRY_SHIFT) * GUARDED_HEAP_MAP_ENTRY_BYTES)
+        0
 
 // Memory size tracked by one L4 table: 8KB * 8 * 4KB = 256MB
 #define GUARDED_HEAP_MAP_UNIT_SIZE                \
-        (GUARDED_HEAP_MAP_SIZE * 8 * EFI_PAGE_SIZE)
+        0
 
 // L4 table entry number: 8KB / 8 = 1024
 #define GUARDED_HEAP_MAP_ENTRIES_PER_UNIT         \
-        (GUARDED_HEAP_MAP_SIZE / GUARDED_HEAP_MAP_ENTRY_BYTES)
+        0
 
 // L4 table entry indexing
 #define GUARDED_HEAP_MAP_ENTRY_INDEX(Address)                       \
-        (RShiftU64 (Address, EFI_PAGE_SHIFT                         \
-                             + GUARDED_HEAP_MAP_ENTRY_BIT_SHIFT)    \
-         & GUARDED_HEAP_MAP_ENTRY_MASK)
+        0
 
 // L4 table entry bit indexing
 #define GUARDED_HEAP_MAP_ENTRY_BIT_INDEX(Address)       \
-        (RShiftU64 (Address, EFI_PAGE_SHIFT)            \
-         & ((1 << GUARDED_HEAP_MAP_ENTRY_BIT_SHIFT) - 1))
+        0
 
 //
 // Total bits (pages) tracked by one L4 table (65536-bit)
 //
 #define GUARDED_HEAP_MAP_BITS                               \
-        (1 << (GUARDED_HEAP_MAP_ENTRY_SHIFT                 \
-               + GUARDED_HEAP_MAP_ENTRY_BIT_SHIFT))
+        0
 
 //
 // Bit indexing inside the whole L4 table (0 - 65535)
 //
 #define GUARDED_HEAP_MAP_BIT_INDEX(Address)                     \
-        (RShiftU64 (Address, EFI_PAGE_SHIFT)                    \
-         & ((1 << (GUARDED_HEAP_MAP_ENTRY_SHIFT                 \
-                   + GUARDED_HEAP_MAP_ENTRY_BIT_SHIFT)) - 1))
+        0
 
 //
 // Memory address bit width tracked by L4 table: 10 + 6 + 12 = 28
 //
 #define GUARDED_HEAP_MAP_TABLE_SHIFT                                      \
-        (GUARDED_HEAP_MAP_ENTRY_SHIFT + GUARDED_HEAP_MAP_ENTRY_BIT_SHIFT  \
-         + EFI_PAGE_SHIFT)
+        0
 
 //
 // Macro used to initialize the local array variable for map table traversing

@@ -186,9 +186,9 @@ typedef union {
 // 4KB. This should in no way be confused with the page size of the processor.
 // An EFI_PAGE is just the quanta of memory in EFI.
 //
-#define EFI_PAGE_SIZE             SIZE_4KB
-#define EFI_PAGE_MASK             0xFFF
-#define EFI_PAGE_SHIFT            12
+#define EFI_PAGE_SIZE             SIZE_64KB
+#define EFI_PAGE_MASK             0xFFFF
+#define EFI_PAGE_SHIFT            16
 
 /**
   Macro that converts a size, in bytes, to a number of EFI_PAGESs.

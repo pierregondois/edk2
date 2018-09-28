@@ -1480,6 +1480,10 @@
   gEfiMdeModulePkgTokenSpaceGuid.PcdMaximumPeiResetNotifies|0x10|UINT32|0x0000010A
 
 [PcdsPatchableInModule, PcdsDynamic, PcdsDynamicEx]
+
+# See other comment on this parameter
+  gEfiMdeModulePkgTokenSpaceGuid.PcdIsBooting|FALSE|BOOLEAN|0x40550006
+
   ## This PCD defines the Console output row. The default value is 25 according to UEFI spec.
   #  This PCD could be set to 0 then console output would be at max column and max row.
   # @Prompt Console output row.

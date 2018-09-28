@@ -45,8 +45,8 @@ AllocatePages (
 
   Hob.Raw = GetHobList ();
 
-  // Check to see if on 4k boundary
-  Offset = Hob.HandoffInformationTable->EfiFreeMemoryTop & 0xFFF;
+  // Check to see if on 64k boundary
+  Offset = Hob.HandoffInformationTable->EfiFreeMemoryTop & 0xFFFF;
   if (Offset != 0) {
     // If not aligned, make the allocation aligned.
     Hob.HandoffInformationTable->EfiFreeMemoryTop -= Offset;
