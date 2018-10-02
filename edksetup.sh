@@ -1,4 +1,4 @@
-#testPierre
+#testPierrefgh
 # Copyright (c) 2006 - 2016, Intel Corporation. All rights reserved.<BR>
 # Copyright (c) 2016, Linaro Ltd. All rights reserved.<BR>
 # This program and the accompanying materials
