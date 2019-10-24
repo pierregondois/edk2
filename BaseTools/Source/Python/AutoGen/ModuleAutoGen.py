@@ -2,6 +2,7 @@
 # Create makefile for MS nmake and GNU make
 #
 # Copyright (c) 2019, Intel Corporation. All rights reserved.<BR>
+# Copyright (c) 2019, ARM Limited. All rights reserved.<BR>
 # SPDX-License-Identifier: BSD-2-Clause-Patent
 #
 from __future__ import absolute_import
@@ -931,7 +932,14 @@ class ModuleAutoGen(AutoGen):
     @cached_property
     def CodaTargetList(self):
         self.Targets
-        return self._FinalBuildTargetList
+
+        # To resolve dependencies on compiled ASL files (.aml files) in modules,
+        # build them first by putting them as the first targets in the
+        # CodaTargetList.
+        OrderedList = list(self._FinalBuildTargetList)
+        OrderedList.sort(key=lambda T: (T.Target.Ext.lower() != '.aml'))
+
+        return OrderedList
 
     @cached_property
     def FileTypes(self):
