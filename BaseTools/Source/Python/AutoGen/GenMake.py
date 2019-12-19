@@ -2,6 +2,8 @@
 # Create makefile for MS nmake and GNU make
 #
 # Copyright (c) 2007 - 2020, Intel Corporation. All rights reserved.<BR>
+# Copyright (c) 2020, ARM Limited. All rights reserved.<BR>
+#
 # SPDX-License-Identifier: BSD-2-Clause-Patent
 #
 
@@ -1002,6 +1004,11 @@ cleanlib:
 
                 Deps = []
                 CCodeDeps = []
+
+                if T.SourceFileDependencies:
+                    for File in T.SourceFileDependencies:
+                        Deps.append(self.PlaceMacro(str(File), self.Macros))
+
                 # Add force-dependencies
                 for Dep in T.Dependencies:
                     Deps.append(self.PlaceMacro(str(Dep), self.Macros))
