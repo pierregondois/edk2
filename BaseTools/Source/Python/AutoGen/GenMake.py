@@ -1013,6 +1013,11 @@ cleanlib:
 
                 Deps = []
                 CCodeDeps = []
+
+                if T.SourceFileDependencies:
+                    for File in T.SourceFileDependencies:
+                        Deps.append(self.PlaceMacro(str(File), self.Macros))
+
                 # Add force-dependencies
                 for Dep in T.Dependencies:
                     Deps.append(self.PlaceMacro(str(Dep), self.Macros))
