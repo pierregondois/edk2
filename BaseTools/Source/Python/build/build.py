@@ -4,6 +4,7 @@
 #  Copyright (c) 2014, Hewlett-Packard Development Company, L.P.<BR>
 #  Copyright (c) 2007 - 2019, Intel Corporation. All rights reserved.<BR>
 #  Copyright (c) 2018, Hewlett Packard Enterprise Development, L.P.<BR>
+#  Copyright (c) 2020, ARM Limited. All rights reserved.<BR>
 #
 #  SPDX-License-Identifier: BSD-2-Clause-Patent
 #
@@ -1250,7 +1251,7 @@ class Build():
                                 (AutoGenObject.BuildTarget, AutoGenObject.ToolChain, AutoGenObject.Arch),
                             ExtraData=str(AutoGenObject))
 
-        makefile = GenMake.BuildFile(AutoGenObject)._FILE_NAME_[GenMake.gMakeType]
+        makefile = GenMake.BuildFile(AutoGenObject).getMakefileName()
 
         # run
         if Target == 'run':
@@ -2039,10 +2040,10 @@ class Build():
             ModuleBuildDirectoryList = data_pipe.Get("ModuleBuildDirectoryList")
 
             for m_build_dir in LibraryBuildDirectoryList:
-                if not os.path.exists(os.path.join(m_build_dir,GenMake.BuildFile._FILE_NAME_[GenMake.gMakeType])):
+                if not os.path.exists(os.path.join(m_build_dir,GenMake.BuildFile.getMakefileName())):
                     return None
             for m_build_dir in ModuleBuildDirectoryList:
-                if not os.path.exists(os.path.join(m_build_dir,GenMake.BuildFile._FILE_NAME_[GenMake.gMakeType])):
+                if not os.path.exists(os.path.join(m_build_dir,GenMake.BuildFile.getMakefileName())):
                     return None
             Wa = WorkSpaceInfo(
                 workspacedir,active_p,target,toolchain,archlist
