@@ -608,19 +608,10 @@ cleanlib:
         IncludePathList = []
         asmsource = [item for item in MyAgo.SourceFileList if item.File.upper().endswith((".NASM",".ASM",".NASMB","S"))]
         if asmsource:
-            for P in  MyAgo.IncludePathList:
+            for P in MyAgo.IncludePathList:
                 IncludePath = self._INC_FLAG_['NASM'] + self.PlaceMacro(P, self.Macros)
-                if IncludePath.endswith(os.sep):
-                    IncludePath = IncludePath.rstrip(os.sep)
-                # When compiling .nasm files, need to add a literal backslash at each path
-                # To specify a literal backslash at the end of the line, precede it with a caret (^)
-                if P == MyAgo.IncludePathList[-1] and os.sep == '\\':
-                    IncludePath = ''.join([IncludePath, '^', os.sep])
-                else:
-                    IncludePath = os.path.join(IncludePath, '')
-                IncludePathList.append(IncludePath)
+                IncludePathList.append(os.path.join(IncludePath, ''))
             FileMacroList.append(self._FILE_MACRO_TEMPLATE.Replace({"macro_name": "NASM_INC", "source_file": IncludePathList}))
-
         # Generate macros used to represent files containing list of input files
         for ListFileMacro in self.ListFileMacros:
             ListFileName = os.path.join(MyAgo.OutputDir, "%s.lst" % ListFileMacro.lower()[:len(ListFileMacro) - 5])
