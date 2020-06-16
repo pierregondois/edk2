@@ -437,26 +437,6 @@
         "$(ASL)" $(ASL_FLAGS) $(ASL_OUTFLAGS)${dst} $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.iiii
         -AmlToHex $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.aml
 
-[C-Code-File.AcpiTable]
-    <InputFile>
-        ?.c
-
-    <OutputFile>
-        $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.acpi
-
-    <ExtraDependency>
-        $(MAKE_FILE)
-
-    <Command.MSFT, Command.INTEL>
-        "$(ASLCC)" $(DEPS_FLAGS) /Fo$(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.obj $(ASLCC_FLAGS) $(DEPS_FLAGS) $(INC) ${src}
-        "$(ASLDLINK)" /OUT:$(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.dll $(ASLDLINK_FLAGS) $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.obj
-        "$(GENFW)" -o ${dst} -c $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.dll $(GENFW_FLAGS)
-
-    <Command.GCC>
-        "$(ASLCC)" $(DEPS_FLAGS) -c -o $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.obj $(CC_FLAGS) $(ASLCC_FLAGS) $(DEPS_FLAGS) $(INC) ${src}
-        "$(ASLDLINK)" -o $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.dll $(ASLDLINK_FLAGS) $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.obj
-        "$(GENFW)" -o ${dst} -c $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.dll $(GENFW_FLAGS)
-
 [Acpi-Table-Code-File]
     <InputFile>
         ?.aslc, ?.act
