@@ -1,6 +1,6 @@
 /** @file
 
-  Copyright (c) 2013-2014, ARM Ltd. All rights reserved.<BR>
+  Copyright (c) 2013-2020, ARM Ltd. All rights reserved.<BR>
   Copyright (c) 2017, Linaro. All rights reserved.
 
   SPDX-License-Identifier: BSD-2-Clause-Patent
@@ -97,7 +97,7 @@ AndroidBootImgGetKernelInfo (
   ASSERT (IS_VALID_ANDROID_PAGE_SIZE (Header->PageSize));
 
   *KernelSize = Header->KernelSize;
-  *Kernel = BootImg + Header->PageSize;
+  *Kernel = (UINT8*)BootImg + Header->PageSize;
   return EFI_SUCCESS;
 }
 
@@ -339,9 +339,12 @@ AndroidBootImgUpdateFdt (
     goto Fdt_Exit;
   }
 
-  Status = AndroidBootImgSetProperty64 (UpdatedFdtBase, ChosenNode,
-                                        "linux,initrd-end",
-                                        (UINTN)(RamdiskData + RamdiskSize));
+  Status = AndroidBootImgSetProperty64 (
+             UpdatedFdtBase,
+             ChosenNode,
+             "linux,initrd-end",
+             (UINTN)((UINT8*)RamdiskData + RamdiskSize)
+             );
   if (EFI_ERROR (Status)) {
     goto Fdt_Exit;
   }
