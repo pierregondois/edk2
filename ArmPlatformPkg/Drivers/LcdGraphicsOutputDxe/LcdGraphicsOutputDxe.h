@@ -1,6 +1,6 @@
 /** @file
 
-  Copyright (c) 2011-2018, ARM Ltd. All rights reserved.<BR>
+  Copyright (c) 2011 - 2020, Arm Limited. All rights reserved.<BR>
   SPDX-License-Identifier: BSD-2-Clause-Patent
 
 **/
@@ -83,7 +83,7 @@ LcdGraphicsBlt (
 
 UINTN
 GetBytesPerPixel (
-  IN  LCD_BPP       Bpp
+  IN  ELCD_BPP      Bpp
   );
 
 EFI_STATUS

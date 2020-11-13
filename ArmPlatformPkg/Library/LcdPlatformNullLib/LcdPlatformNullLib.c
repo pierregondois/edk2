@@ -1,7 +1,7 @@
 /** @file
 
   Copyright (c) 2017, Linaro, Ltd. All rights reserved.
-  Copyright (c) 2018, Arm Limited. All rights reserved.
+  Copyright (c) 2018 - 2020, Arm Limited. All rights reserved.<BR>
 
   SPDX-License-Identifier: BSD-2-Clause-Patent
 
@@ -137,7 +137,7 @@ LcdPlatformGetTimings (
 EFI_STATUS
 LcdPlatformGetBpp (
   IN  UINT32                                ModeNumber,
-  OUT LCD_BPP*                              Bpp
+  OUT ELCD_BPP*                             Bpp
   )
 {
   ASSERT (FALSE);

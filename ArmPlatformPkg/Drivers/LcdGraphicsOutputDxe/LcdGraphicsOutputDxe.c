@@ -299,7 +299,7 @@ LcdGraphicsSetMode (
   EFI_STATUS                      Status;
   EFI_GRAPHICS_OUTPUT_BLT_PIXEL   FillColour;
   LCD_INSTANCE*                   Instance;
-  LCD_BPP                         Bpp;
+  ELCD_BPP                        Bpp;
 
   Instance = LCD_INSTANCE_FROM_GOP_THIS (This);
 
@@ -370,22 +370,22 @@ EXIT:
 
 UINTN
 GetBytesPerPixel (
-  IN  LCD_BPP       Bpp
+  IN  ELCD_BPP      Bpp
   )
 {
   switch (Bpp) {
-  case LCD_BITS_PER_PIXEL_24:
+  case ELcdBitsPerPixel_24:
     return 4;
 
-  case LCD_BITS_PER_PIXEL_16_565:
-  case LCD_BITS_PER_PIXEL_16_555:
-  case LCD_BITS_PER_PIXEL_12_444:
+  case ELcdBitsPerPixel_16_565:
+  case ELcdBitsPerPixel_16_555:
+  case ELcdBitsPerPixel_12_444:
     return 2;
 
-  case LCD_BITS_PER_PIXEL_8:
-  case LCD_BITS_PER_PIXEL_4:
-  case LCD_BITS_PER_PIXEL_2:
-  case LCD_BITS_PER_PIXEL_1:
+  case ELcdBitsPerPixel_8:
+  case ELcdBitsPerPixel_4:
+  case ELcdBitsPerPixel_2:
+  case ELcdBitsPerPixel_1:
     return 1;
 
   default:

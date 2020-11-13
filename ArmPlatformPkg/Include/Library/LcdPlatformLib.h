@@ -197,15 +197,16 @@
   Register
 **/
 typedef enum {
-  LCD_BITS_PER_PIXEL_1 = 0,
-  LCD_BITS_PER_PIXEL_2,
-  LCD_BITS_PER_PIXEL_4,
-  LCD_BITS_PER_PIXEL_8,
-  LCD_BITS_PER_PIXEL_16_555,
-  LCD_BITS_PER_PIXEL_24,
-  LCD_BITS_PER_PIXEL_16_565,
-  LCD_BITS_PER_PIXEL_12_444
-} LCD_BPP;
+  ELcdBitsPerPixel_1 = 0,
+  ELcdBitsPerPixel_2,
+  ELcdBitsPerPixel_4,
+  ELcdBitsPerPixel_8,
+  ELcdBitsPerPixel_16_555,
+  ELcdBitsPerPixel_24,
+  ELcdBitsPerPixel_16_565,
+  ELcdBitsPerPixel_12_444,
+  ELcdBitsPerPixel_Max
+} ELCD_BPP;
 
 // Display timing settings.
 typedef struct {
@@ -320,7 +321,7 @@ LcdPlatformGetTimings (
 EFI_STATUS
 LcdPlatformGetBpp (
   IN  UINT32                                ModeNumber,
-  OUT LCD_BPP*                              Bpp
+  OUT ELCD_BPP*                             Bpp
   );
 
 #endif /* LCD_PLATFORM_LIB_H_ */

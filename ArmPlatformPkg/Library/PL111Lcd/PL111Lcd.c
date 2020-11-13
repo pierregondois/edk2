@@ -1,7 +1,7 @@
 /** @file
   This file contains the platform independent parts of PL111Lcd
 
-  Copyright (c) 2011-2018, ARM Ltd. All rights reserved.<BR>
+  Copyright (c) 2011 - 2020, Arm Limited. All rights reserved.<BR>
 
   SPDX-License-Identifier: BSD-2-Clause-Patent
 
@@ -80,7 +80,7 @@ LcdSetMode (
   SCAN_TIMINGS      *Horizontal;
   SCAN_TIMINGS      *Vertical;
   UINT32            LcdControl;
-  LCD_BPP           LcdBpp;
+  ELCD_BPP          LcdBpp;
 
   EFI_GRAPHICS_OUTPUT_MODE_INFORMATION  ModeInfo;
 
