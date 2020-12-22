@@ -6,8 +6,8 @@
 
 **/
 
-#ifndef __ARM_CORTEX_A5x_H__
-#define __ARM_CORTEX_A5x_H__
+#ifndef ARM_CORTEX_A5X_H__
+#define ARM_CORTEX_A5X_H__
 
 //
 // Cortex A5x feature bit definitions
@@ -41,4 +41,4 @@ ArmUnsetCpuExCrBit (
   IN  UINT64    Bits
   );
 
-#endif
+#endif // ARM_CORTEX_A5X_H__
