@@ -109,6 +109,10 @@ class Edk2ToolsBuild(BaseAbstractInvocable):
             pc = '"' + pc + '"'
         shell_env.set_shell_var("PYTHON_COMMAND", pc)
 
+        print("Pierre")
+        print(shell_env.get_shell_var(""))
+        print(subprocess.check_call(["printenv"))
+
         if self.tool_chain_tag.lower().startswith("vs"):
 
             # # Update environment with required VC vars.
