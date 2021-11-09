@@ -271,6 +271,7 @@ ParseAddressMap (
   @retval EFI_SUCCESS             The function completed successfully.
   @retval EFI_ABORTED             An error occurred.
   @retval EFI_INVALID_PARAMETER   Invalid parameter.
+  @retval EFI_NOT_FOUND           Not found.
   @retval EFI_OUT_OF_RESOURCES    An allocation has failed.
 **/
 STATIC
@@ -310,17 +311,15 @@ ParseIrqMap (
   UINT32                          BufferSize;
 
   Data = fdt_getprop (Fdt, HostPciNode, "interrupt-map", &DataSize);
-  if ((Data == NULL) || (DataSize < 0)) {
-    // We cannot check the # for now
-    ASSERT (0);
-    return EFI_ABORTED;
-  } else if (DataSize == 0) {
-    // No device described, so no interrupt-mapping.
+  if ((Data == NULL) || (DataSize <= 0)) {
     DEBUG ((
       DEBUG_WARN,
-      "Fdt parser: No Pci device described in the device tree.\n"
+      "Fdt parser: No Legacy interrupts found for PCI configuration space at "
+      "address: 0x%lx, group segment: %d\n",
+      PciInfo->PciConfigSpaceInfo.BaseAddress,
+      PciInfo->PciConfigSpaceInfo.PciSegmentGroupNumber
       ));
-    return EFI_SUCCESS;
+    return EFI_NOT_FOUND;
   }
 
   // PCI interrupts are expected to be on 1 cell. Check it.
@@ -556,11 +555,11 @@ PciNodeParser (
       HostPciNode,
       PciInfo
       );
-  if (EFI_ERROR (Status)) {
+  if (EFI_ERROR (Status) && (Status!= EFI_NOT_FOUND)) {
     ASSERT (0);
   }
 
-  return Status;
+  return EFI_SUCCESS;
 }
 
 /** Add the parsed Pci information to the Configuration Manager.
@@ -609,7 +608,8 @@ PciInfoAdd (
   }
 
   // Add the interrupt map space CmObj to the Configuration Manager.
-  // Possible to have no device described, and thus no interrupt-mapping.
+  // Possible to have no device described, and thus no interrupt-mapping,
+  // or devices and no legacy interrupts.
   if (PciTableInfo->Mapping[PciMappingTableInterrupt].Count != 0) {
     Status = AddMultipleCmObjWithCmObjRef (
                FdtParserHandle,
