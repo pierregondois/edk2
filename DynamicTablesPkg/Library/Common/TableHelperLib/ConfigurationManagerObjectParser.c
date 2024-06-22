@@ -2,6 +2,8 @@
   Configuration Manager Object parser.
 
   Copyright (c) 2021 - 2023, ARM Limited. All rights reserved.<BR>
+  Copyright (C) 2024 Advanced Micro Devices, Inc. All rights reserved.
+
   SPDX-License-Identifier: BSD-2-Clause-Patent
 
 **/
@@ -667,6 +669,116 @@ STATIC CONST CM_OBJ_PARSER  CmArchCommonPsdInfoParser[] = {
   { "NumProc",   4, "0x%x", NULL },
 };
 
+/** A parser for EArchCommonObjFadtSciInterrupt.
+*/
+STATIC CONST CM_OBJ_PARSER  CmArchCommonObjFadtSciInterruptParser[] = {
+  { "SciInterrupt", 2, "0x%x", NULL }
+};
+
+/** A parser for EArchCommonObjFadtSciCmdInfo.
+*/
+STATIC CONST CM_OBJ_PARSER  CmArchCommonObjFadtSciCmdInfoParser[] = {
+  { "SciCmd",      4, "0x%x", NULL },
+  { "AcpiEnable",  1, "0x%x", NULL },
+  { "AcpiDisable", 1, "0x%x", NULL },
+  { "S4BiosReq",   1, "0x%x", NULL },
+  { "PstateCnt",   1, "0x%x", NULL },
+  { "CstCnt",      1, "0x%x", NULL }
+};
+
+/** A parser for EArchCommonObjFadtPmBlockInfo.
+*/
+STATIC CONST CM_OBJ_PARSER  CmArchCommonObjFadtPmBlockInfoParser[] = {
+  { "Pm1aEvtBlk", 4, "0x%x", NULL },
+  { "Pm1bEvtBlk", 4, "0x%x", NULL },
+  { "Pm1aCntBlk", 4, "0x%x", NULL },
+  { "Pm1bCntBlk", 4, "0x%x", NULL },
+  { "Pm2CntBlk",  4, "0x%x", NULL },
+  { "PmTmrBlk",   4, "0x%x", NULL },
+  { "Pm1EvtLen",  1, "0x%x", NULL },
+  { "Pm1CntLen",  1, "0x%x", NULL },
+  { "Pm2CntLen",  1, "0x%x", NULL },
+  { "PmTmrLen",   1, "0x%x", NULL }
+};
+
+/** A parser for EArchCommonObjFadtGpeBlockInfo.
+*/
+STATIC CONST CM_OBJ_PARSER  CmArchCommonObjFadtGpeBlockInfoParser[] = {
+  { "Gpe0Blk",    4, "0x%x", NULL },
+  { "Gpe1Blk",    4, "0x%x", NULL },
+  { "Gpe0BlkLen", 1, "0x%x", NULL },
+  { "Gpe1BlkLen", 1, "0x%x", NULL },
+  { "Gpe1Base",   1, "0x%x", NULL }
+};
+
+/** A parser for EArchCommonObjFadtXpmBlockInfo.
+*/
+STATIC CONST CM_OBJ_PARSER  CmArchCommonObjFadtXpmBlockInfoParser[] = {
+  { "XPm1aEvtBlk", sizeof (EFI_ACPI_6_5_GENERIC_ADDRESS_STRUCTURE),
+    NULL, NULL, AcpiGenericAddressParser,
+    ARRAY_SIZE (AcpiGenericAddressParser) },
+  { "XPm1bEvtBlk", sizeof (EFI_ACPI_6_5_GENERIC_ADDRESS_STRUCTURE),
+    NULL, NULL, AcpiGenericAddressParser,
+    ARRAY_SIZE (AcpiGenericAddressParser) },
+  { "XPm1aCntBlk", sizeof (EFI_ACPI_6_5_GENERIC_ADDRESS_STRUCTURE),
+    NULL, NULL, AcpiGenericAddressParser,
+    ARRAY_SIZE (AcpiGenericAddressParser) },
+  { "XPm1bCntBlk", sizeof (EFI_ACPI_6_5_GENERIC_ADDRESS_STRUCTURE),
+    NULL, NULL, AcpiGenericAddressParser,
+    ARRAY_SIZE (AcpiGenericAddressParser) },
+  { "XPm2CntBlk",  sizeof (EFI_ACPI_6_5_GENERIC_ADDRESS_STRUCTURE),
+    NULL, NULL, AcpiGenericAddressParser,
+    ARRAY_SIZE (AcpiGenericAddressParser) },
+  { "XPmTmrBlk",   sizeof (EFI_ACPI_6_5_GENERIC_ADDRESS_STRUCTURE),
+    NULL, NULL, AcpiGenericAddressParser,
+    ARRAY_SIZE (AcpiGenericAddressParser) }
+};
+
+/** A parser for EArchCommonObjFadtXgpeBlockInfo.
+*/
+STATIC CONST CM_OBJ_PARSER  CmArchCommonObjFadtXgpeBlockInfoParser[] = {
+  { "XGpe0Blk", sizeof (EFI_ACPI_6_5_GENERIC_ADDRESS_STRUCTURE),
+    NULL, NULL, AcpiGenericAddressParser,
+    ARRAY_SIZE (AcpiGenericAddressParser) },
+  { "XGpe1Blk", sizeof (EFI_ACPI_6_5_GENERIC_ADDRESS_STRUCTURE),
+    NULL, NULL, AcpiGenericAddressParser,
+    ARRAY_SIZE (AcpiGenericAddressParser) }
+};
+
+/** A parser for EArchCommonObjFadtSleepBlockInfo.
+*/
+STATIC CONST CM_OBJ_PARSER  CmArchCommonObjFadtSleepBlockInfoParser[] = {
+  { "SleepControlReg", sizeof (EFI_ACPI_6_5_GENERIC_ADDRESS_STRUCTURE),
+    NULL, NULL, AcpiGenericAddressParser,
+    ARRAY_SIZE (AcpiGenericAddressParser) },
+  { "SleepStatusReg",  sizeof (EFI_ACPI_6_5_GENERIC_ADDRESS_STRUCTURE),
+    NULL, NULL, AcpiGenericAddressParser,
+    ARRAY_SIZE (AcpiGenericAddressParser) }
+};
+
+/** A parser for EArchCommonObjFadtResetBlockInfo.
+*/
+STATIC CONST CM_OBJ_PARSER  CmArchCommonObjFadtResetBlockInfoParser[] = {
+  { "ResetReg",   sizeof (EFI_ACPI_6_5_GENERIC_ADDRESS_STRUCTURE),
+    NULL, NULL, AcpiGenericAddressParser,
+    ARRAY_SIZE (AcpiGenericAddressParser) },
+  { "ResetValue", 1,                                              "0x%x",NULL }
+};
+
+/** A parser for EArchCommonObjFadtMiscInfo.
+*/
+STATIC CONST CM_OBJ_PARSER  CmArchCommonObjFadtMiscInfoParser[] = {
+  { "PLvl2Lat",    2, "0x%x", NULL },
+  { "PLvl3Lat",    2, "0x%x", NULL },
+  { "FlushSize",   2, "0x%x", NULL },
+  { "FlushStride", 2, "0x%x", NULL },
+  { "DutyOffset",  1, "0x%x", NULL },
+  { "DutyWidth",   1, "0x%x", NULL },
+  { "DayAlrm",     1, "0x%x", NULL },
+  { "MonAlrm",     1, "0x%x", NULL },
+  { "Century",     1, "0x%x", NULL }
+};
+
 /** A parser for Arch Common namespace objects.
 */
 STATIC CONST CM_OBJ_PARSER_ARRAY  ArchCommonNamespaceObjectParser[] = {
@@ -696,6 +808,15 @@ STATIC CONST CM_OBJ_PARSER_ARRAY  ArchCommonNamespaceObjectParser[] = {
   CM_PARSER_ADD_OBJECT (EArchCommonObjPccSubspaceType4Info,        CmArchCommonPccSubspaceType34InfoParser),
   CM_PARSER_ADD_OBJECT (EArchCommonObjPccSubspaceType5Info,        CmArchCommonPccSubspaceType5InfoParser),
   CM_PARSER_ADD_OBJECT (EArchCommonObjPsdInfo,                     CmArchCommonPsdInfoParser),
+  CM_PARSER_ADD_OBJECT (EArchCommonObjFadtSciInterrupt,            CmArchCommonObjFadtSciInterruptParser),
+  CM_PARSER_ADD_OBJECT (EArchCommonObjFadtSciCmdInfo,              CmArchCommonObjFadtSciCmdInfoParser),
+  CM_PARSER_ADD_OBJECT (EArchCommonObjFadtPmBlockInfo,             CmArchCommonObjFadtPmBlockInfoParser),
+  CM_PARSER_ADD_OBJECT (EArchCommonObjFadtGpeBlockInfo,            CmArchCommonObjFadtGpeBlockInfoParser),
+  CM_PARSER_ADD_OBJECT (EArchCommonObjFadtXpmBlockInfo,            CmArchCommonObjFadtXpmBlockInfoParser),
+  CM_PARSER_ADD_OBJECT (EArchCommonObjFadtXgpeBlockInfo,           CmArchCommonObjFadtXgpeBlockInfoParser),
+  CM_PARSER_ADD_OBJECT (EArchCommonObjFadtSleepBlockInfo,          CmArchCommonObjFadtSleepBlockInfoParser),
+  CM_PARSER_ADD_OBJECT (EArchCommonObjFadtResetBlockInfo,          CmArchCommonObjFadtResetBlockInfoParser),
+  CM_PARSER_ADD_OBJECT (EArchCommonObjFadtMiscInfo,                CmArchCommonObjFadtMiscInfoParser),
   CM_PARSER_ADD_OBJECT_RESERVED (EArchCommonObjMax)
 };
 

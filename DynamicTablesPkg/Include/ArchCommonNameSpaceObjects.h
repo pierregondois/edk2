@@ -1,6 +1,7 @@
 /** @file
 
   Copyright (c) 2024, Arm Limited. All rights reserved.<BR>
+  Copyright (C) 2024 Advanced Micro Devices, Inc. All rights reserved.
 
   SPDX-License-Identifier: BSD-2-Clause-Patent
 
@@ -46,6 +47,15 @@ typedef enum ArchCommonObjectID {
   EArchCommonObjPccSubspaceType4Info,           ///< 23 - Pcc Subspace Type 4 Info
   EArchCommonObjPccSubspaceType5Info,           ///< 24 - Pcc Subspace Type 5 Info
   EArchCommonObjPsdInfo,                        ///< 25 - P-State Dependency (PSD) Info
+  EArchCommonObjFadtSciInterrupt,               ///< 26 - FADT SCI Interrupt information
+  EArchCommonObjFadtSciCmdInfo,                 ///< 27 - FADT SCI CMD information
+  EArchCommonObjFadtPmBlockInfo,                ///< 28 - FADT Power management block info
+  EArchCommonObjFadtGpeBlockInfo,               ///< 29 - FADT GPE block info
+  EArchCommonObjFadtXpmBlockInfo,               ///< 30 - FADT 64-bit Power Management block info
+  EArchCommonObjFadtXgpeBlockInfo,              ///< 31 - FADT 64-bit GPE block info
+  EArchCommonObjFadtSleepBlockInfo,             ///< 32 - FADT Sleep block info
+  EArchCommonObjFadtResetBlockInfo,             ///< 33 - FADT Reset block info
+  EArchCommonObjFadtMiscInfo,                   ///< 34 - FADT Legacy fields info
   EArchCommonObjMax
 } EARCH_COMMON_OBJECT_ID;
 
@@ -651,6 +661,139 @@ typedef struct CmArchCommonPccSubspaceType5Info {
     ID: EArchCommonObjPsdInfo
 */
 typedef AML_PSD_INFO CM_ARCH_COMMON_PSD_INFO;
+
+/** A structure that describes the
+    SCI interrupt Information for the Platform.
+
+    ID: EArchCommonObjFadtSciInterrupt
+*/
+typedef struct CmArchCommonSciInterrupt {
+  /** This is the SCI interrupt field of the FADT Table
+      described in the ACPI Specification
+  */
+  UINT16    SciInterrupt;
+} CM_ARCH_COMMON_FADT_SCI_INTERRUPT;
+
+/** A structure that describes the
+    SCI CMD Information for the Platform.
+
+    ID: EArchCommonObjFadtSciCmdInfo
+*/
+typedef struct CmArchCommonSciCmdInfo {
+  /** This is the System control interrupt command information of the FADT Table
+      described in the ACPI Specification
+  */
+  UINT32    SciCmd;
+  UINT8     AcpiEnable;
+  UINT8     AcpiDisable;
+  UINT8     S4BiosReq;
+  UINT8     PstateCnt;
+  UINT8     CstCnt;
+} CM_ARCH_COMMON_FADT_SCI_CMD_INFO;
+
+/** A structure that describes the
+    power management block information.
+
+    ID: EArchCommonObjFadtPmBlockInfo
+*/
+typedef struct CmArchCommonPmBlockInfo {
+  /** This is the PM event block information of the FADT Table
+      described in the ACPI Specification
+  */
+  UINT32    Pm1aEvtBlk;
+  UINT32    Pm1bEvtBlk;
+  UINT32    Pm1aCntBlk;
+  UINT32    Pm1bCntBlk;
+  UINT32    Pm2CntBlk;
+  UINT32    PmTmrBlk;
+  UINT8     Pm1EvtLen;
+  UINT8     Pm1CntLen;
+  UINT8     Pm2CntLen;
+  UINT8     PmTmrLen;
+} CM_ARCH_COMMON_FADT_PM_BLOCK_INFO;
+
+/** A structure that describes the
+    GPE block information.
+
+    ID: EArchCommonObjFadtGpeBlockInfo
+*/
+typedef struct CmArchCommonGpeBlockInfo {
+  /** This is the GPE Block information of the FADT Table
+      described in the ACPI Specification
+  */
+  UINT32    Gpe0Blk;
+  UINT32    Gpe1Blk;
+  UINT8     Gpe0BlkLen;
+  UINT8     Gpe1BlkLen;
+  UINT8     Gpe1Base;
+} CM_ARCH_COMMON_FADT_GPE_BLOCK_INFO;
+
+/** A structure that describes the
+    64bit power management block information.
+
+    ID: EArchCommonObjFadtXpmBlockInfo
+*/
+typedef struct CmArchCommonXpmBlockInfo {
+  /** This is the System control interrupt command information of the FADT Table
+      described in the ACPI Specification
+  */
+  EFI_ACPI_6_5_GENERIC_ADDRESS_STRUCTURE    XPm1aEvtBlk;
+  EFI_ACPI_6_5_GENERIC_ADDRESS_STRUCTURE    XPm1bEvtBlk;
+  EFI_ACPI_6_5_GENERIC_ADDRESS_STRUCTURE    XPm1aCntBlk;
+  EFI_ACPI_6_5_GENERIC_ADDRESS_STRUCTURE    XPm1bCntBlk;
+  EFI_ACPI_6_5_GENERIC_ADDRESS_STRUCTURE    XPm2CntBlk;
+  EFI_ACPI_6_5_GENERIC_ADDRESS_STRUCTURE    XPmTmrBlk;
+} CM_ARCH_COMMON_FADT_X_PM_BLOCK_INFO;
+
+/** A structure that describes the
+    64-bit GPE block information.
+
+    ID: EArchCommonObjFadtXgpeBlockInfo
+*/
+typedef struct CmArchCommonXgpeBlockInfo {
+  /** This is the GPE Block information of the FADT Table
+      described in the ACPI Specification
+  */
+  EFI_ACPI_6_5_GENERIC_ADDRESS_STRUCTURE    XGpe0Blk;
+  EFI_ACPI_6_5_GENERIC_ADDRESS_STRUCTURE    XGpe1Blk;
+} CM_ARCH_COMMON_FADT_X_GPE_BLOCK_INFO;
+
+/** A structure that describes the
+    sleep control block information.
+
+    ID: EArchCommonObjFadtSleepBlockInfo
+*/
+typedef struct CmArchCommonSleepBlockInfo {
+  EFI_ACPI_6_5_GENERIC_ADDRESS_STRUCTURE    SleepControlReg;
+  EFI_ACPI_6_5_GENERIC_ADDRESS_STRUCTURE    SleepStatusReg;
+} CM_ARCH_COMMON_FADT_SLEEP_BLOCK_INFO;
+
+/** A structure that describes the
+    Reset control block information.
+
+    ID: EArchCommonObjFadtResetBlockInfo
+*/
+typedef struct CmArchCommonResetBlockInfo {
+  EFI_ACPI_6_5_GENERIC_ADDRESS_STRUCTURE    ResetReg;
+  UINT8                                     ResetValue;
+} CM_ARCH_COMMON_FADT_RESET_BLOCK_INFO;
+
+/** A structure that describes the
+    miscellaneous FADT fields information.
+
+    ID: EArchCommonObjFadtMiscInfo
+*/
+typedef struct CmArchCommonFadtMiscInfo {
+  UINT16    PLvl2Lat;
+  UINT16    PLvl3Lat;
+  UINT16    FlushSize;
+  UINT16    FlushStride;
+  UINT8     DutyOffset;
+  UINT8     DutyWidth;
+  UINT8     DayAlrm;
+  UINT8     MonAlrm;
+  UINT8     Century;
+} CM_ARCH_COMMON_FADT_MISC_INFO;
 
 #pragma pack()
 
