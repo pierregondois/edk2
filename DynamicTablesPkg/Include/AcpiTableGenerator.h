@@ -1,6 +1,7 @@
 /** @file
 
   Copyright (c) 2017 - 2022, Arm Limited. All rights reserved.<BR>
+  Copyright (C) 2024 Advanced Micro Devices, Inc. All rights reserved.
 
   SPDX-License-Identifier: BSD-2-Clause-Patent
 
@@ -158,6 +159,11 @@ typedef enum StdAcpiTableId {
   the standard ACPI table generators.
 */
 #define TABLE_GENERATOR_CREATOR_ID_ARM  SIGNATURE_32('A', 'R', 'M', 'H')
+
+/** The Generic Creator ID for the ACPI tables generated using
+  the standard ACPI table generators.
+*/
+#define TABLE_GENERATOR_CREATOR_ID  SIGNATURE_32('D', 'Y', 'N', 'T')
 
 /** A macro to initialise the common header part of EFI ACPI tables as
     defined by the EFI_ACPI_DESCRIPTION_HEADER structure.
