@@ -95,6 +95,58 @@ GET_OBJECT_LIST (
   CM_ARCH_COMMON_PSD_INFO
   );
 
+/**
+  This macro expands to a function that retrieves the ACPI Table list
+  information from the Configuration Manager.
+*/
+GET_OBJECT_LIST (
+  EObjNameSpaceStandard,
+  EStdObjAcpiTableList,
+  CM_STD_OBJ_ACPI_TABLE_INFO
+  );
+
+/** Check if the PPTT table will be present.
+
+  @param [in]  CfgMgrProtocol         Pointer to the Configuration Manager
+                                      Protocol Interface.
+
+  @retval TRUE if the PPTT table is in the list of ACPI tables to install.
+          FALSE otherwise.
+**/
+STATIC
+BOOLEAN
+EFIAPI
+CheckPpttTablePresent (
+  IN  CONST EDKII_CONFIGURATION_MANAGER_PROTOCOL  *CONST  CfgMgrProtocol
+  )
+{
+  EFI_STATUS                  Status;
+  CM_STD_OBJ_ACPI_TABLE_INFO  *AcpiTableList;
+  UINT32                      AcpiTableListCount;
+  UINT32                      Index;
+
+  Status = GetEStdObjAcpiTableList (
+             CfgMgrProtocol,
+             CM_NULL_TOKEN,
+             &AcpiTableList,
+             &AcpiTableListCount
+             );
+  if (EFI_ERROR (Status)) {
+    ASSERT_EFI_ERROR (Status);
+    return FALSE;
+  }
+
+  for (Index = 0; Index < AcpiTableListCount; Index++) {
+    if (AcpiTableList[Index].TableGeneratorId ==
+        CREATE_STD_ACPI_TABLE_GEN_ID (EStdAcpiTableIdPptt))
+    {
+      return TRUE;
+    }
+  }
+
+  return FALSE;
+}
+
 /** Initialize the TokenTable.
 
   One entry should be allocated for each CM_ARCH_COMMON_PROC_HIERARCHY_INFO
@@ -922,11 +974,14 @@ CheckProcNode (
   BOOLEAN          IsLeaf,
   CM_OBJECT_TOKEN  NodeToken,
   CM_OBJECT_TOKEN  ParentNodeToken,
-  BOOLEAN          PackageNodeSeen
+  BOOLEAN          PackageNodeSeen,
+  BOOLEAN          PpttTablePresent
   )
 {
   BOOLEAN  InvalidFlags;
   BOOLEAN  HasPhysicalPackageBit;
+  UINT32   CheckMask;
+  UINT32   ExpectedMask;
 
   HasPhysicalPackageBit = (NodeFlags & EFI_ACPI_6_3_PPTT_PACKAGE_PHYSICAL) ==
                           EFI_ACPI_6_3_PPTT_PACKAGE_PHYSICAL;
@@ -934,13 +989,31 @@ CheckProcNode (
   // Only one Physical Package flag is allowed in the hierarchy
   InvalidFlags = HasPhysicalPackageBit && PackageNodeSeen;
 
-  // Check Leaf specific flags.
+  CheckMask    = 0;
+  ExpectedMask = 0;
+
+  // Leaves must also have the VALID bit set.
   if (IsLeaf) {
-    InvalidFlags |= ((NodeFlags & PPTT_LEAF_MASK) != PPTT_LEAF_MASK);
-    // Must have Physical Package flag somewhere in the hierarchy
-    InvalidFlags |= !(HasPhysicalPackageBit || PackageNodeSeen);
+    ExpectedMask = (PPTT_LEAF_FLAG_MASK | PPTT_VALID_FLAG_MASK);
+    CheckMask    = (PPTT_LEAF_FLAG_MASK | PPTT_VALID_FLAG_MASK);
   } else {
-    InvalidFlags |= ((NodeFlags & PPTT_LEAF_MASK) != 0);
+    if (PpttTablePresent) {
+      // If the PPTT table is present, all proc. container nodes will have
+      // a valid _UID built.
+      ExpectedMask = PPTT_VALID_FLAG_MASK;
+      CheckMask    = (PPTT_LEAF_FLAG_MASK | PPTT_VALID_FLAG_MASK);
+    } else {
+      // If there is no PPTT table, the state of the VALID bit is ignored.
+      ExpectedMask = 0;
+      CheckMask    = PPTT_LEAF_FLAG_MASK;
+    }
+  }
+
+  // Check the flags.
+  InvalidFlags |= (((NodeFlags ^ ExpectedMask) & CheckMask) != 0);
+
+  if (IsLeaf) {
+    InvalidFlags |= !(HasPhysicalPackageBit || PackageNodeSeen);
   }
 
   if (InvalidFlags) {
@@ -967,6 +1040,8 @@ CheckProcNode (
   @param [in] ParentNode              Parent node to attach the created
                                       node to.
   @param [in]  PackageNodeSeen        A parent of the ProcNode has the physical package flag set.
+  @param [in]  PpttTablePresent       The PPTT table will be installed.
+
 
   @retval EFI_SUCCESS             Success.
   @retval EFI_INVALID_PARAMETER   Invalid parameter.
@@ -980,7 +1055,8 @@ CreateAmlCpuTopologyTree (
   IN  CONST EDKII_CONFIGURATION_MANAGER_PROTOCOL  *CONST  CfgMgrProtocol,
   IN        CM_OBJECT_TOKEN                               NodeToken,
   IN        AML_NODE_HANDLE                               ParentNode,
-  IN        BOOLEAN                                       PackageNodeSeen
+  IN        BOOLEAN                                       PackageNodeSeen,
+  IN        BOOLEAN                                       PpttTablePresent
   )
 {
   EFI_STATUS              Status;
@@ -1014,7 +1090,8 @@ CreateAmlCpuTopologyTree (
                    TRUE,
                    Generator->ProcNodeList[Index].Token,
                    NodeToken,
-                   PackageNodeSeen
+                   PackageNodeSeen,
+                   PpttTablePresent
                    );
         if (EFI_ERROR (Status)) {
           ASSERT (0);
@@ -1049,7 +1126,8 @@ CreateAmlCpuTopologyTree (
                    FALSE,
                    Generator->ProcNodeList[Index].Token,
                    NodeToken,
-                   PackageNodeSeen
+                   PackageNodeSeen,
+                   PpttTablePresent
                    );
         if (EFI_ERROR (Status)) {
           ASSERT (0);
@@ -1114,7 +1192,8 @@ CreateAmlCpuTopologyTree (
                    CfgMgrProtocol,
                    Generator->ProcNodeList[Index].Token,
                    ProcContainerNode,
-                   (PackageNodeSeen || HasPhysicalPackageBit)
+                   (PackageNodeSeen || HasPhysicalPackageBit),
+                   PpttTablePresent
                    );
         if (EFI_ERROR (Status)) {
           ASSERT (0);
@@ -1167,7 +1246,8 @@ CreateTopologyFromProcHierarchy (
              CfgMgrProtocol,
              CM_NULL_TOKEN,
              ScopeNode,
-             FALSE
+             FALSE,
+             CheckPpttTablePresent (CfgMgrProtocol)
              );
   if (EFI_ERROR (Status)) {
     ASSERT (0);
