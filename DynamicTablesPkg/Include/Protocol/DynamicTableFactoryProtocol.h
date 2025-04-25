@@ -200,6 +200,21 @@ EFI_STATUS
   IN  CONST DT_TABLE_GENERATOR                *CONST Generator
   );
 
+/** Finalize creation of firmware tables.
+
+  Once all the desired firmware have been generated,
+  operate a finalization step. This can include cleanup,
+  data validation, etc.
+
+  @retval EFI_SUCCESS           Success.
+  @retval EFI_INVALID_PARAMETER Invalid parameter or data.
+**/
+typedef
+EFI_STATUS
+(EFIAPI *EDKII_DYNAMIC_TABLE_FACTORY_FINALIZE)(
+  VOID
+  );
+
 /** A structure describing the Dynamic Table Factory Protocol interface.
 */
 typedef struct DynamicTableFactoryProtocol {
@@ -238,6 +253,10 @@ typedef struct DynamicTableFactoryProtocol {
   /// Deregister a DT generator
   EDKII_DYNAMIC_TABLE_FACTORY_DEREGISTER_DT_TABLE_GENERATOR
                                                             DeregisterDtTableGenerator;
+
+  /// Finalization step
+  EDKII_DYNAMIC_TABLE_FACTORY_FINALIZE
+                                                            Finalize;
 
   /** Pointer to the data structure that holds the
       list of registered table generators

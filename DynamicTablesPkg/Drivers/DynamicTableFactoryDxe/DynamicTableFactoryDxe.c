@@ -21,6 +21,7 @@
 #include <Protocol/ConfigurationManagerProtocol.h>
 #include <Protocol/DynamicTableFactoryProtocol.h>
 #include <SmbiosTableGenerator.h>
+#include <Library/MetadataHandlerLib.h>
 
 #include "DynamicTableFactory.h"
 
@@ -28,6 +29,33 @@
     list of registered ACPI and SMBIOS table generators.
 */
 EDKII_DYNAMIC_TABLE_FACTORY_INFO  TableFactoryInfo;
+
+/** Finalize creation of firmware tables.
+
+  Once all the desired firmware have been generated,
+  operate a finalization step. This can include cleanup,
+  data validation, etc.
+
+  @retval EFI_SUCCESS           Success.
+  @retval EFI_INVALID_PARAMETER Invalid parameter or data.
+**/
+STATIC
+EFI_STATUS
+EFIAPI
+Finalize (
+  VOID
+  )
+{
+  EFI_STATUS  Status;
+
+  // Validate the collected Metadata.
+  Status = MetadataHandlerValidate ();
+  if (EFI_ERROR (Status)) {
+    ASSERT_EFI_ERROR (Status);
+  }
+
+  return Status;
+}
 
 /** A structure describing the Dynamic Table Factory protocol.
 */
@@ -44,6 +72,7 @@ EDKII_DYNAMIC_TABLE_FACTORY_PROTOCOL  DynamicTableFactoryProtocol = {
   GetDtTableGenerator,
   RegisterDtTableGenerator,
   DeregisterDtTableGenerator,
+  Finalize,
   &TableFactoryInfo
 };
 

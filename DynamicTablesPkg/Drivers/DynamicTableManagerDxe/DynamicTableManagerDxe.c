@@ -764,5 +764,7 @@ DynamicTableManagerDxeInitialize (
       ));
   }
 
+  TableFactoryProtocol->Finalize ();
+
   return Status;
 }
